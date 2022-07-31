@@ -1,0 +1,7 @@
+Saldo wynosi 0
+Wplata 120 
+Saldo wynosi 120
+Wyplata 40
+Saldo wynosi 80
+Wyplata 1000
+Saldo wynosi 999999000
