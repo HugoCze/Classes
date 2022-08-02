@@ -1,3 +1,7 @@
+import collections.abc
+import operator
+
+
 class WizCoinException(Exception):
     """Modul wizcoin zglasza ten wyjatek w przypadku nieprawidlowego uzycia modulu"""
     pass
@@ -96,8 +100,8 @@ class WizCoin:
 
         # Modyfikujemy obiket self w miejsu:
         self.galleons += other.galleons
-        self.sickles += other.galleons
-        self.knuts += other.galleons
+        self.sickles += other.sickles
+        self.knuts += other.knuts
         return self  # Metody dunder w miejscu prawie zawsze zwracaja self.
 
     def __imul__(self, other):
@@ -116,3 +120,38 @@ class WizCoin:
         self.knuts *= other
         self.sickles *= other
         return self  # Metody dunder w miejscu prawie zawsze zwracaja self
+
+    def _comparisonOperatorHelper(self, operatorFunc, other):
+        """Metoda pomocnicza dla metody dunder porownan"""
+
+        if isinstance(other, WizCoin):
+            return operatorFunc(self.total, other.total)
+        elif isinstance(other, (int, float)):
+            return operatorFunc(self.total, other)
+        elif isinstance(other, collections.abc.Sequence):
+            otherValue = (other[0]*17*29) + (other[1]*29) + other[2]
+            return operatorFunc(self.total, otherValue)
+        elif operatorFunc == operator.eq:
+            return False
+        elif operatorFunc == operator.ne:
+            return True
+        else:
+            return NotImplemented
+
+    def __eq__(self, other):  # eq oznacza EQual
+        return self._comparisonOperatorHelper(operator.eq, other)
+
+    def __ne__(self, other):  # ne oznacza NotEqual
+        return self._comparisonOperatorHelper(operator.ne, other)
+
+    def __lt__(self, other):  # lt oznacza less than
+        return self._comparisonOperatorHelper(operator.lt, other)
+
+    def __le__(self, other):  # le oznacza less or equal
+        return self._comparisonOperatorHelper(operator.le, other)
+
+    def __gt__(self, other):  # gt oznacza greater than
+        return self._comparisonOperatorHelper(operator.gt, other)
+
+    def __ge__(self, other):  # ge oznacza greater than or equal
+        return self._comparisonOperatorHelper(operator.ge, other)
